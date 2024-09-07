@@ -31,7 +31,7 @@
 						</p>
 					</div>
 					<div class="d-flex flex-column gap-2">
-						<button class="btn btn-warning" @onclick="()=>SetSelectUpdate(todo.TodoId)">
+						<button class="btn btn-warning" @onclick="()=>SetSelectUpdate(todo.TodoId)" data-bs-target="#updateModal" data-bs-toggle="modal">
 							<i class="bi bi-pencil-square"></i>
 						</button>
 						<button class="btn btn-danger" @onclick="@(() => DeleteTodo(todo.TodoId))">
@@ -100,15 +100,15 @@
 </div>
 <!-- Modal to Update Todo -->
 <div class="modal fade"
-	 id="exampleModal"
+	 id="updateModal"
 	 tabindex="-1"
-	 aria-labelledby="exampleModalLabel"
+	 aria-labelledby="updateModalLabel"
 	 aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header border-0">
-				<h1 class="modal-title fs-5 fw-semibold" id="exampleModalLabel">
-					Add Todo
+				<h1 class="modal-title fs-5 fw-semibold" id="updateModalLabel">
+					Edit Todo
 				</h1>
 				<button type="button"
 						class="btn-close"
@@ -116,7 +116,7 @@
 						aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
-				<EditForm method="post" FormName="formTodo" Model="@todoModel" OnValidSubmit="AddTodo">
+				<EditForm method="post" FormName="formTodo" Model="@todoModel" OnValidSubmit="UpdateTodo">
 					 <DataAnnotationsValidator />
 					<div class="mb-3">
 						<label for="day" class="form-label">Day</label>
@@ -143,7 +143,7 @@
 						<button type="submit"
 								class="btn btn-insert-todo"
 								data-bs-dismiss="modal">
-							Insert
+							Update
 						</button>
 					</div>
 				</EditForm>
@@ -180,7 +180,6 @@
 		ReloadPage();
 	}
 
-
 	async void DeleteTodo(string id)
 	{
 		await todoService.DeleteTodo(id);
@@ -201,6 +200,22 @@
 	{
 		selectUpdate = true;
 		todoUpdate = todos.FirstOrDefault(x => x.TodoId == id);
+		todoModel.Day = todoUpdate.Day;
+		todoModel.Note = todoUpdate.Note;
+	}
+
+	async Task UpdateTodo()
+    {
+        var newTodo = new Todo
+        {
+            TodoId = todoUpdate.TodoId,
+            Day = todoModel.Day,
+            Note = todoModel.Note,
+        };
+
+		await todoService.UpdateTodo(newTodo);
+
+        ReloadPage();
 	}
 
 	private void ReloadPage()

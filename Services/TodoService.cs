@@ -60,7 +60,9 @@ public class TodoService
 
 	public async Task<Todo> UpdateTodo(Todo todo)
 	{
-		throw new NotImplementedException();
+		var response = await _client.PutAsJsonAsync("todo", todo);
+		response.EnsureSuccessStatusCode();
+		return todo;
 	}
 
 	public async Task<TodoDetail> UpdateTodoDetail(TodoDetail todoDetail)

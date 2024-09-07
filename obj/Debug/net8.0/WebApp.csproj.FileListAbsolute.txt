@@ -1029,3 +1029,4 @@ D:\Mandiri\Bootcamp\BlazorWeb-Haidar\WebApp\obj\Debug\net8.0\WebApp.dll
 D:\Mandiri\Bootcamp\BlazorWeb-Haidar\WebApp\obj\Debug\net8.0\refint\WebApp.dll
 D:\Mandiri\Bootcamp\BlazorWeb-Haidar\WebApp\obj\Debug\net8.0\WebApp.pdb
 D:\Mandiri\Bootcamp\BlazorWeb-Haidar\WebApp\obj\Debug\net8.0\ref\WebApp.dll
+D:\Mandiri\Bootcamp\BlazorWeb-Haidar\WebApp\obj\Debug\net8.0\WebApp.sourcelink.json

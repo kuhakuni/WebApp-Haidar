@@ -1,0 +1,218 @@
+﻿@page "/home"
+@using WebApp.Layout;
+@using WebApp.Services;
+@using WebApp.Models;
+@using System.ComponentModel.DataAnnotations;
+
+<Navbar IsAuthenticated="true" />
+<div class="btn-add-todo d-flex align-items-center justify-content-center"
+	 data-bs-target="#exampleModal"
+	 data-bs-toggle="modal">
+	<i class="bi bi-plus text-white fs-1"></i>
+</div>
+<div class="container mt-2">
+	<h1 class="fw-medium text-center fs-3">
+		Welcome back,
+		<span class="text-primary fw-semibold" id="username">Haidar</span> 👋
+	</h1>
+	<div class="row mt-5" id="todo-container">
+
+		@foreach (var todo in todos)
+		{
+			<div class="col-md-6">
+				<div class="col-md-12 todo-item">
+					<div>
+						<h5 class="fs-6">@todo.Day</h5>
+						<p class="m-0 fs-3 fw-bold">
+							@todo.Note
+						</p>
+						<p class="m-0 fst-italic">
+							Created at @todo.TodayDate
+						</p>
+					</div>
+					<div class="d-flex flex-column gap-2">
+						<button class="btn btn-warning" @onclick="()=>SetSelectUpdate(todo.TodoId)">
+							<i class="bi bi-pencil-square"></i>
+						</button>
+						<button class="btn btn-danger" @onclick="@(() => DeleteTodo(todo.TodoId))">
+							<i class="bi bi-trash"></i>
+						</button>
+					</div>
+				</div>
+			</div>
+		}
+
+	</div>
+</div>
+
+<!-- Modal to Add Todo -->
+<div class="modal fade"
+	 id="exampleModal"
+	 tabindex="-1"
+	 aria-labelledby="exampleModalLabel"
+	 aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header border-0">
+				<h1 class="modal-title fs-5 fw-semibold" id="exampleModalLabel">
+					Add Todo
+				</h1>
+				<button type="button"
+						class="btn-close"
+						data-bs-dismiss="modal"
+						aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<EditForm method="post" FormName="formTodo" Model="@todoModel" OnValidSubmit="AddTodo">
+					 <DataAnnotationsValidator />
+					<div class="mb-3">
+						<label for="day" class="form-label">Day</label>
+						<InputSelect class="form-select" id="day" @bind-Value="todoModel.Day" required>
+							<option value="Monday">Monday</option>
+							<option value="Tuesday">Tuesday</option>
+							<option value="Wednesday">Wednesday</option>
+							<option value="Thursday">Thursday</option>
+							<option value="Friday">Friday</option>
+							<option value="Saturday">Saturday</option>
+							<option value="Sunday">Sunday</option>
+						</InputSelect>
+					</div>
+					<div class="mb-3">
+						<label for="note" class="form-label">What is it about?</label>
+						<InputTextArea class="form-control" id="note" @bind-Value="todoModel.Note" placeholder="Enter your note here..." required></InputTextArea>
+					</div>
+					<div class="d-flex justify-content-end gap-2">
+						<button type="button"
+								class="btn btn-secondary"
+								data-bs-dismiss="modal">
+							Close
+						</button>
+						<button type="submit"
+								class="btn btn-insert-todo"
+								data-bs-dismiss="modal">
+							Insert
+						</button>
+					</div>
+				</EditForm>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- Modal to Update Todo -->
+<div class="modal fade"
+	 id="exampleModal"
+	 tabindex="-1"
+	 aria-labelledby="exampleModalLabel"
+	 aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header border-0">
+				<h1 class="modal-title fs-5 fw-semibold" id="exampleModalLabel">
+					Add Todo
+				</h1>
+				<button type="button"
+						class="btn-close"
+						data-bs-dismiss="modal"
+						aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<EditForm method="post" FormName="formTodo" Model="@todoModel" OnValidSubmit="AddTodo">
+					 <DataAnnotationsValidator />
+					<div class="mb-3">
+						<label for="day" class="form-label">Day</label>
+						<InputSelect class="form-select" id="day" @bind-Value="todoModel.Day" required>
+							<option value="Monday">Monday</option>
+							<option value="Tuesday">Tuesday</option>
+							<option value="Wednesday">Wednesday</option>
+							<option value="Thursday">Thursday</option>
+							<option value="Friday">Friday</option>
+							<option value="Saturday">Saturday</option>
+							<option value="Sunday">Sunday</option>
+						</InputSelect>
+					</div>
+					<div class="mb-3">
+						<label for="note" class="form-label">What is it about?</label>
+						<InputTextArea class="form-control" id="note" @bind-Value="todoModel.Note" placeholder="Enter your note here..." required></InputTextArea>
+					</div>
+					<div class="d-flex justify-content-end gap-2">
+						<button type="button"
+								class="btn btn-secondary"
+								data-bs-dismiss="modal">
+							Close
+						</button>
+						<button type="submit"
+								class="btn btn-insert-todo"
+								data-bs-dismiss="modal">
+							Insert
+						</button>
+					</div>
+				</EditForm>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code {
+	private List<Todo> todos = new List<Todo>();
+	private bool selectUpdate = false;
+
+	Todo todoUpdate = new Todo();
+
+	[Inject]
+	private NavigationManager Navigation { get; set; }
+
+	[SupplyParameterFromForm]
+	TodoModel todoModel { get; set; } = new TodoModel();
+
+	TodoService todoService = new TodoService(new HttpClient());
+
+	async Task AddTodo()
+	{
+
+		var newTodo = new Todo
+		{
+			Day = todoModel.Day,
+			Note = todoModel.Note,
+		};
+
+		await todoService.AddTodo(newTodo);
+
+		ReloadPage();
+	}
+
+
+	async void DeleteTodo(string id)
+	{
+		await todoService.DeleteTodo(id);
+		ReloadPage();
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		await LoadTodos();
+	}
+
+	private async Task LoadTodos()
+	{
+		todos = await todoService.GetTodos();
+	}
+
+	private void SetSelectUpdate(string id)
+	{
+		selectUpdate = true;
+		todoUpdate = todos.FirstOrDefault(x => x.TodoId == id);
+	}
+
+	private void ReloadPage()
+	{
+		Navigation.NavigateTo("/home", true);
+	}
+
+	public class TodoModel
+	{
+		[Required]
+		public string Day { get; set; }
+		[Required]
+		public string Note { get; set; }
+	}
+}

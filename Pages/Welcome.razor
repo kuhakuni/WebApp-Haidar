@@ -1,0 +1,31 @@
+﻿@page "/"
+@using WebApp.Pages;
+<div class="landing">
+<Navbar IsAuthenticated="false" />
+	<div class="container d-flex justify-content-center align-items-center"
+		 style="min-height: 85vh">
+		<div class="d-flex flex-row gap-2 align-items-center">
+			<div class="col-md-5" data-aos="zoom-out" data-aos-delay="200">
+				<img src="./assets/img/img-landing.svg"
+					 alt="Todo img"
+					 class="img-fluid"
+					 width="500" />
+			</div>
+			<div class="col-md-6 offset-md-1">
+				<h1 class="title fw-semibold" data-aos="fade-up">
+					Manage Your Tasks <span class="text-primary"> More Easily</span>
+				</h1>
+				<p class="subtitle fw-light" data-aos="fade-up" data-aos-delay="400">
+					With <span class="fw-semibold">Todo App</span>, you can organize,
+					plan, and collaborate on tasks and projects of all sizes.
+				</p>
+				<a class="btn-start rounded-5"
+				   href="/login"
+				   data-aos="fade-up"
+				   data-aos-delay="800">
+					Get Started <i class="bi bi-arrow-right"></i>
+				</a>
+			</div>
+		</div>
+	</div>
+</div>
